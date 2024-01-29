@@ -1,9 +1,8 @@
 #include <stdio.h>
 #include <omp.h>
-#include <stdlib.h>
 
 int main(void) {
-  #pragma omp parallel 
+  #pragma omp parallel // you can add limiters by putting num_threads(n)
   {
     printf("Hello, World! from thread = %d\n", omp_get_thread_num());
   }
