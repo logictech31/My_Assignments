@@ -2,31 +2,22 @@
 #include <omp.h>
 #include <stdlib.h>
 #define MAX 2
-#define NEW_MATRIX (int*) malloc(sizeof(int) * MAX * MAX)
 
-int get_matrix_input(int *arr[MAX]);
-int print_matrix(int *arr[MAX]);
+int get_matrix(int [MAX][MAX]);
 
 void main(void) {
   int A[MAX][MAX], B[MAX][MAX], C[MAX][MAX];
-  int tid, i = 0, j = 0;
+  int tid = 0, i = 0, j = 0;
   int *d, *e, *f;
 
   printf("Enter data for 4x4 matrix A: ");
   
-  for(i = 0; i < MAX; i ++) {
-    for(j = 0; j < MAX; j ++) {
-      scanf("%d", &A[i][j]);
-    }
-  }
+  get_matrix(A);
 
   printf("Enter data for 4x4 matrix B: ");
   
-  for(i = 0; i < MAX; i ++) {
-    for(j = 0; j < MAX; j ++) {
-      scanf("%d", &B[i][j]);
-    }
-  }
+  get_matrix(B);
+  
   printf("A = ");
   for(i = 0; i < MAX; i ++) {
     for(j = 0; j < MAX; j ++) {
@@ -41,11 +32,6 @@ void main(void) {
     }
     printf("\n");
   }
-  
-
-  d = NEW_MATRIX;
-  e = NEW_MATRIX;
-  f = NEW_MATRIX;
 
   d = (int*)A;
   e = (int*)B;
@@ -64,4 +50,11 @@ void main(void) {
       }
     printf("\n");
   }
+}
+
+
+int get_matrix(int arr[MAX][MAX]) {
+  for(int i = 0; i < MAX; i ++)
+    for(int j = 0; j < MAX; j ++)
+      scanf("%d", &arr[i][j]);
 }

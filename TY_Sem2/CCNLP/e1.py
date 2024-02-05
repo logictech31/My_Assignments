@@ -1,6 +1,6 @@
 import nltk
 
-sentence = "Arthur did not feel very good"
+sentence = input("Enter a sentence: ")
 tokens = nltk.word_tokenize(sentence)
 print(tokens)
 
