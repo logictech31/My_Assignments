@@ -19,9 +19,6 @@ import nltk
 from nltk.corpus import stopwords
 from nltk.tokenize import word_tokenize
 
-nltk.download('stopwords')
-nltk.download('punkt')
-
 def remove_stopwords(text):
     # Tokenize the text
     words = word_tokenize(text)
@@ -38,7 +35,7 @@ def remove_stopwords(text):
     return filtered_text
 
 # Example usage
-text = "This is an example sentence with some stopwords."
+text = input("Enter some text: ");
 filtered_text = remove_stopwords(text)
 
 print("Original Text:", text)
