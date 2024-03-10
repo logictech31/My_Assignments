@@ -8,11 +8,16 @@ static void quicksort(int, int);
 static int partition(int, int);
 static void swap(long*, long*);
 
-int main(void) {
-    int i = 0;
+int main(int argc, char **argv) {
+    int i = 0, max_threads = 0;
+    
     srand(time(NULL));
+    if(argc > 1) {
+        size_arr = atoi(argv[1]);
+    } else {
     (void)printf("What is the size of array?\nSize: ");
     (void)scanf("%d", &size_arr);
+    }
 
     iarr = (long*) malloc(size_arr * sizeof(long int));
     if(iarr == NULL) {
@@ -20,17 +25,22 @@ int main(void) {
     }
 
     *iarr = 0;    
-
-
-    (void)printf("Array Input: ");
-    #pragma omp parallel num_threads(100)
-    {
-        while(i < size_arr) {
-            *(iarr+i++) = rand();
-        }
+    
+    while(i < size_arr) {
+        *(iarr+i++) = rand();
     }
 
-    quicksort(0, size_arr-1);
+    max_threads = omp_get_max_threads();
+
+    if(size_arr < max_threads) {
+        max_threads = size_arr;
+    }
+
+    #pragma omp parallel num_threads(max_threads)
+    {
+        #pragma omp single
+        quicksort(0, size_arr-1);
+    }
 
     (void)printf("Array Sorted: ");
     i = 0;
@@ -54,7 +64,6 @@ int partition(int low, int high) {
     long pivot = iarr[low];
     int leftwall = (int)low;
     int i;
-    
     for(i = low + 1; i <= high; i++) {
         if(pivot > iarr[i]) {
             swap(&iarr[i], &iarr[leftwall]);
@@ -70,17 +79,9 @@ int partition(int low, int high) {
 void quicksort(int low, int high) {
     if(low < high) {
         int pivot = partition(low, high);
-        
-        #pragma omp parallel sections
-        {
-            #pragma omp section
-            {
-                quicksort(low, pivot);
-            }
-            #pragma omp section
-            {
-                quicksort(pivot+1, high);
-            }
-        }
+        #pragma omp task shared(low, high, pivot)
+        quicksort(low, pivot);
+        #pragma omp task shared(low, high, pivot)
+        quicksort(pivot + 1, high);
     }
 }

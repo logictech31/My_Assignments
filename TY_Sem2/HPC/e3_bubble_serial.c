@@ -6,7 +6,7 @@
 void swap(int32_t *, int32_t *);
 int32_t bubble_sort(int32_t *, uint32_t);
 
-int32_t main() {
+int32_t main(void) {
   int32_t *arr;
   uint32_t i = 0, N = 0;
 

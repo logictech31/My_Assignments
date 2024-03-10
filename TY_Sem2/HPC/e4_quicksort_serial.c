@@ -8,12 +8,16 @@ static void quicksort(int, int);
 static int partition(int, int);
 static void swap(long*, long*);
 
-int main(void) {
+int main(int argc, char **argv) {
     int i = 0;
     
     srand(time(NULL));
+    if(argc > 1) {
+        size_arr = atoi(argv[1]);
+    } else {
     (void)printf("What is the size of array?\nSize: ");
     (void)scanf("%d", &size_arr);
+    }
 
     iarr = (long*) malloc(size_arr * sizeof(long int));
     if(iarr == NULL) {
@@ -21,12 +25,8 @@ int main(void) {
     }
 
     *iarr = 0;    
-
-
-    (void)printf("Array Input: ");
     
     while(i < size_arr) {
-        // iarr[i] = rand() % 100;
         *(iarr+i++) = rand();
     }
 
