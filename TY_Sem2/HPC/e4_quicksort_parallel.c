@@ -1,7 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <omp.h>
-
+#include <time.h>
 static int size_arr;
 static long *iarr;
 static void quicksort(int, int);
@@ -10,8 +10,8 @@ static void swap(long*, long*);
 
 int main(void) {
     int i = 0;
-
-    (void)printf("What is the size of array?");
+    srand(time(NULL));
+    (void)printf("What is the size of array?\nSize: ");
     (void)scanf("%d", &size_arr);
 
     iarr = (long*) malloc(size_arr * sizeof(long int));
@@ -26,7 +26,7 @@ int main(void) {
     #pragma omp parallel num_threads(100)
     {
         while(i < size_arr) {
-            *(iarr+i++) = rand() % 1000;
+            *(iarr+i++) = rand();
         }
     }
 
