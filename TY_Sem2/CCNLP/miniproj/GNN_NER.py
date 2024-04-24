@@ -8,6 +8,5 @@
 class GNN:
     def __init__(self) -> None:
         pass
-    def form_nodes(self, data):
-        head = ''
-        return head
+    def GNN_Push(self, data):
+        pass

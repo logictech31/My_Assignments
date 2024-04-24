@@ -1,5 +1,5 @@
 %.out: %.c
-	gcc -g -o $@ -fopenmp $< -lpthread
+	gcc -g -pg -o $@ -fopenmp $< -lpthread
 
 .PHONY: clean
 clean:
