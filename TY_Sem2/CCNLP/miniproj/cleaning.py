@@ -5,6 +5,7 @@ from WordNetLemmatizeFix import WordNetLemmatizeFix
 import spacy
 from spacy import displacy
 import PyPDF2
+import regex as re
 
 pdfFileObj = open('testcorpus.pdf', 'rb')
 pdfReader = PyPDF2.PdfReader(pdfFileObj)
@@ -28,11 +29,14 @@ class cleaning:
         corpus = self.create_corpus()
         corpus = self.lemmatize_tokenize(corpus)
         doc = nlp(corpus)
-        entlist = []
+        print(corpus)
+        entset = {("zero", "0")}
         for ent in doc.ents:
-            entlist.append([(ent.text, ent.label_)])
-        return entlist
+            temp = {(ent.text, ent.label_)}
+            entset = entset.union(temp)
+        return entset
 
 obj = cleaning()
-entlist = obj.NER_with_Spacy()
-print(entlist)
+entset = obj.NER_with_Spacy()
+print()
+print(entset)
