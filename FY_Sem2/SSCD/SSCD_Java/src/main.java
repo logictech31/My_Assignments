@@ -7,15 +7,17 @@ public class main {
         System.out.println("Please pass the filename as argument");
     }
     public static void main(String []args) {
-        assignment1 assign1 = new assignment1();
+        assignment2 obj = new assignment2();
         if (args.length < 1) {
             help();
             return;
         }
-        ArrayList<IntermediateCode> ic = assign1.GenerateObjectCode(args[0]);
+        ArrayList<IntermediateCode> ic = obj.GenerateObjectCode(args[0]);
 
         for (IntermediateCode i: ic) {
             System.out.println(i.toString());
         }
+
+        obj.ConvertObjectCodeToMachineCode(ic);
     }
 }

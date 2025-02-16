@@ -1,0 +1,11 @@
+{
+    "files.associations": {
+        "cstdlib": "cpp",
+        "iostream": "cpp",
+        "atomic": "cpp",
+        "chrono": "cpp",
+        "iterator": "cpp",
+        "format": "cpp",
+        "text_encoding": "cpp"
+    }
+}

@@ -1,5 +1,11 @@
-BINARY = bully_election
-SRC = main.c
+BINARY = ring_election
+SRC = main.cxx cll.cxx election.cxx
 FLAGS = -g -o
 all:
-	gcc $(FLAGS) $(BINARY) $(SRC)
+	@echo "Generating binary"
+	g++ $(FLAGS) $(BINARY) $(SRC)
+clean:
+	@echo "Removing binary"
+	rm -f $(BINARY)
+
+.PHONY: clean all

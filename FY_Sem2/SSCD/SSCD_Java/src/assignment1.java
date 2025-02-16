@@ -1,35 +1,8 @@
-import java.io.BufferedReader;
 import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileReader;
 import java.lang.reflect.Field;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Scanner;
+import java.util.*;
 
-class LiteralTable {
-    String value;
-    int address;
-}
-
-class SymbolTable {
-    String symbol;
-    int address;
-    int len;
-}
-
-class IntermediateCode {
-    int location;
-    HashMap<String, String> InstructionInfo;
-    HashMap<String, String> OperandInfo;
-    HashMap<String,String> RegisterTable;
-
-    IntermediateCode() {
-        InstructionInfo = new HashMap<>();
-        OperandInfo = new HashMap<>();
-    }
-
-    @Override
+class MetaOps {
     public String toString() {
         StringBuilder result = new StringBuilder(this.getClass().getSimpleName() + " { ");
         Field[] fields = this.getClass().getDeclaredFields();
@@ -49,18 +22,43 @@ class IntermediateCode {
     }
 }
 
-class assignment1 {
+class LiteralTable {
+    String value;
+    int address;
+}
+
+class SymbolTable extends MetaOps {
+    long index;
+    int address;
+    int len;
+}
+
+class IntermediateCode extends MetaOps {
+    int location;
+    HashMap<String, String> InstructionInfo;
+    HashMap<String, String> OperandInfo;
+
+    IntermediateCode() {
+        InstructionInfo = new HashMap<>();
+        OperandInfo = new HashMap<>();
+    }
+
+}
+
+class assignment1 extends MetaOps {
     HashMap<String, String> AssemblerDirectives, ImperativeStatements;
-    HashMap<String, String> SymbolTable;
     ArrayList<LiteralTable> Literals;
-    ArrayList<SymbolTable> Symbols;
+    HashMap<String, SymbolTable> Symbols;
+    HashMap<String, String> RegList;
+    int start;
 
     assignment1() {
         Literals = new ArrayList<LiteralTable>();
-        Symbols = new ArrayList<SymbolTable>();
 
+        Symbols = new HashMap<>();
         AssemblerDirectives = new HashMap<>();
         ImperativeStatements = new HashMap<>();
+        RegList = new HashMap<>();
 
         AssemblerDirectives.put("START", "01");
         AssemblerDirectives.put("ORIGIN", "02");
@@ -75,6 +73,26 @@ class assignment1 {
         ImperativeStatements.put("MOVER", "04");
         ImperativeStatements.put("MOVEM", "05");
         ImperativeStatements.put("BC", "06");
+
+        RegList.put("AREG", "01");
+        RegList.put("BREG", "02");
+        RegList.put("CREG", "03");
+        RegList.put("DREG", "04");
+    }
+
+    void updateSymTableIfNecessary(String symbol, int location) {
+        SymbolTable sym = new SymbolTable();
+        sym.address = location;
+        sym.len = 1;
+        if (!Symbols.containsKey(symbol)) {
+            Symbols.put(symbol, sym);
+            int uuindex = UUID.randomUUID().hashCode();
+            sym.index = (uuindex < 0) ? uuindex * -1 : uuindex;
+        } else {
+            SymbolTable temp = Symbols.get(symbol);
+            temp.address = location;
+            Symbols.put(symbol, temp);
+        }
     }
 
     ArrayList<IntermediateCode> GenerateObjectCode(String FilePath) {
@@ -89,35 +107,34 @@ class assignment1 {
                 IntermediateCode temp = new IntermediateCode();
                 if (result[0].contains("START")) {
                     location_tracker = Integer.parseInt(result[1]);
+                    start = location_tracker;
                     temp.InstructionInfo.put("AD", AssemblerDirectives.get(result[0]));
                     ic.add(temp);
                     continue;
                 }
-                for (String a: result) {
-                    System.out.println(a);
-                    if (AssemblerDirectives.containsKey(a)) {
+                for (int i = 0; result.length > i; i ++) {
+                    if (AssemblerDirectives.containsKey(result[i])) {
+                        if (result[i].contains("ORIGIN")) {
+                            location_tracker = Integer.parseInt(result[1]) -1;
+                        }
                         temp.location = location_tracker;
-                        temp.InstructionInfo.put("AD", AssemblerDirectives.get(a));
+                        temp.InstructionInfo.put("AD", AssemblerDirectives.get(result[i]));
                         ic.add(temp);
+                        break;
                     }
-                    if (ImperativeStatements.containsKey(a)) {
+                    if (ImperativeStatements.containsKey(result[i])) {
                         temp.location = location_tracker;
-                        temp.InstructionInfo.put("IS", ImperativeStatements.get(a));
+                        temp.InstructionInfo.put("IS", ImperativeStatements.get(result[i]));
                         ic.add(temp);
                     } else {
-                        if (a.contains("=")) {
-                            LiteralTable lit = new LiteralTable();
-                            lit.address = location_tracker;
-                            lit.value = a;
-                            Literals.add(lit);
-                            temp.OperandInfo.put("C", a);
-                        } else {
-                            SymbolTable sym = new SymbolTable();
-                            sym.address = location_tracker;
-                            sym.symbol = a;
-                            Symbols.add(sym);
-                            temp.OperandInfo.put("S", a);
-                        }
+                            if (RegList.containsKey(result[i])) {
+                                updateSymTableIfNecessary(result[i + 1], location_tracker);
+                                temp.OperandInfo.put(RegList.get(result[i]), result[i+1]);
+                                break;
+                            } else {
+                                updateSymTableIfNecessary(result[i], location_tracker);
+                                temp.OperandInfo.put("S", result[i]);
+                            }
                     }
                 }
                 location_tracker++;
