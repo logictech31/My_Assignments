@@ -14,7 +14,6 @@ int main() {
     struct sockaddr_in address;
     int result,count;
     char ostr[BUFFER_SIZE],istr[BUFFER_SIZE];
-    
     memset(istr, 0, sizeof(istr));
     memset(ostr, 0, sizeof(ostr));
 
@@ -27,7 +26,6 @@ int main() {
         printf("error\n");
         exit(1);
     }
-
     do {
         // Writing a message
         printf("\nYou: ");
